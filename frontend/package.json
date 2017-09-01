@@ -1,0 +1,9 @@
+{
+  "name": "todomvc",
+  "version": "1.0.0",
+  "description": "A demo app for LAIN",
+  "main": "index.js",
+  "repository": "https://github.com/laincloud/todomvc",
+  "author": "bibaijin <bibaijin@gmail.com>",
+  "license": "MIT"
+}

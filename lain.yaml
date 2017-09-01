@@ -1,0 +1,26 @@
+appname: todomvc
+
+build:
+  base: golang:1.9
+  prepare:
+    version: 20170901
+    script:
+      - go get -u github.com/golang/dep/cmd/dep
+      - mkdir -p $GOPATH/src/github.com/laincloud/todomvc
+      - cp -rf . $GOPATH/src/github.com/laincloud/todomvc
+      - cd $GOPATH/src/github.com/laincloud/todomvc && dep ensure
+  script:
+    - cp -rf . $GOPATH/src/github.com/laincloud/todomvc
+    - cd $GOPATH/src/github.com/laincloud/todomvc && go install
+
+release:
+  dest_base: laincloud/centos:7.3.1611
+  copy:
+    - src: $GOPATH/bin/todomvc
+      dest: /lain/app/todomvc
+
+web:
+  cmd: /lain/app/todomvc
+  port: 8080
+  memory: 32M
+  healthcheck: "/ping"

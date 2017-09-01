@@ -1,0 +1,9 @@
+{
+    "mysql": {
+        "username": "fake",
+        "password": "fake",
+        "host": "fake",
+        "port": 3306,
+        "database": "fake"
+    }
+}
