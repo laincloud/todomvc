@@ -6,21 +6,23 @@ build:
     version: 20170901
     script:
       - go get -u github.com/golang/dep/cmd/dep
+      - go get -u github.com/go-swagger/go-swagger/cmd/swagger
       - mkdir -p $GOPATH/src/github.com/laincloud/todomvc
       - cp -rf . $GOPATH/src/github.com/laincloud/todomvc
       - cd $GOPATH/src/github.com/laincloud/todomvc && dep ensure
   script:
     - cp -rf . $GOPATH/src/github.com/laincloud/todomvc
-    - cd $GOPATH/src/github.com/laincloud/todomvc && go install
+    - swagger generate server -A todomvc -f ./swagger.yml -T go-swagger-gen-templates/ -t gen
+    - go install $GOPATH/src/github.com/laincloud/todomvc/gen/cmd/todomvc-server
 
 release:
   dest_base: laincloud/centos:7.3.1611
   copy:
-    - src: $GOPATH/bin/todomvc
-      dest: /lain/app/todomvc
+    - src: $GOPATH/bin/todomvc-server
+      dest: /lain/app/todomvc-server
 
 web:
-  cmd: /lain/app/todomvc
+  cmd: /lain/app/todomvc-server --host=0.0.0.0 --port=8080 --config=/lain/app/prod.json
   port: 8080
   memory: 32M
   healthcheck: "/ping"

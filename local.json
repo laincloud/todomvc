@@ -1,9 +1,9 @@
 {
     "mysql": {
-        "username": "fake",
+        "username": "root",
         "password": "fake",
-        "host": "fake",
+        "host": "mysql",
         "port": 3306,
-        "database": "fake"
+        "database": "todomvc"
     }
 }
