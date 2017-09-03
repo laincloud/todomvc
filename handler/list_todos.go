@@ -27,11 +27,11 @@ func ListTodos(params todo.ListTodosParams, db *xorm.Engine, logger *zap.Logger)
 	todos := make([]*models.Todo, len(todoRecords))
 	for i, record := range todoRecords {
 		title := record.Title
-		done := record.Done
+		completed := record.Completed
 		todos[i] = &models.Todo{
-			ID:    record.ID,
-			Title: &title,
-			Done:  &done,
+			ID:        record.ID,
+			Title:     &title,
+			Completed: &completed,
 		}
 	}
 	return todo.NewListTodosOK().WithPayload(todos)

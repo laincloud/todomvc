@@ -30,9 +30,9 @@ func CreateTodo(params todo.CreateTodoParams, db *xorm.Engine, logger *zap.Logge
 	)
 	return todo.NewCreateTodoCreated().WithPayload(
 		&models.Todo{
-			ID:    todoRecord.ID,
-			Title: &todoRecord.Title,
-			Done:  &todoRecord.Done,
+			ID:        todoRecord.ID,
+			Title:     &todoRecord.Title,
+			Completed: &todoRecord.Completed,
 		},
 	)
 }

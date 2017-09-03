@@ -10,7 +10,7 @@ import (
 type TodoRecord struct {
 	ID        int64     `xorm:"id pk BIGINT autoincr notnull" json:"id"`
 	Title     string    `xorm:"title VARCHAR(255) notnull" json:"title"`
-	Done      bool      `xorm:"done BOOL notnull" json:"done"`
+	Completed bool      `xorm:"completed BOOL notnull" json:"completed"`
 	CreatedAt time.Time `xorm:"created_at DATETIME notnull" json:"created_at"`
 	UpdatedAt time.Time `xorm:"updated_at DATETIME notnull" json:"updated_at"`
 }
@@ -20,7 +20,7 @@ func NewTodoRecord(todo models.Todo) *TodoRecord {
 	now := time.Now()
 	return &TodoRecord{
 		Title:     *todo.Title,
-		Done:      *todo.Done,
+		Completed: *todo.Completed,
 		CreatedAt: now,
 		UpdatedAt: now,
 	}

@@ -50,9 +50,9 @@ func GetTodo(params todo.GetTodoParams, db *xorm.Engine, logger *zap.Logger) mid
 	)
 	return todo.NewGetTodoOK().WithPayload(
 		&models.Todo{
-			ID:    todoRecord.ID,
-			Title: &todoRecord.Title,
-			Done:  &todoRecord.Done,
+			ID:        todoRecord.ID,
+			Title:     &todoRecord.Title,
+			Completed: &todoRecord.Completed,
 		},
 	)
 }

@@ -27,10 +27,10 @@ func UpdateTodo(params todo.UpdateTodoParams, db *xorm.Engine, logger *zap.Logge
 
 	todoRecord := &dao.TodoRecord{
 		Title:     *params.Body.Title,
-		Done:      *params.Body.Done,
+		Completed: *params.Body.Completed,
 		UpdatedAt: time.Now(),
 	}
-	affected, err := db.ID(todoID).UseBool("done").Update(todoRecord)
+	affected, err := db.ID(todoID).UseBool("completed").Update(todoRecord)
 	if err != nil {
 		message := err.Error()
 		return todo.NewUpdateTodoDefault(http.StatusInternalServerError).WithPayload(
