@@ -4,6 +4,9 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/hex"
+	"io"
+	"net/http"
+	"os"
 
 	"go.uber.org/zap"
 )
@@ -35,4 +38,22 @@ func NewRequestID() string {
 	}
 
 	return hex.EncodeToString(bs)
+}
+
+// ServeFile 返回文件
+func ServeFile(w http.ResponseWriter, filename string, logger *zap.Logger) {
+	f, err := os.Open(filename)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer func() {
+		if err1 := f.Close(); err1 != nil {
+			logger.Error("f.Close() failed.", zap.Error(err))
+		}
+	}()
+
+	if _, err := io.Copy(w, f); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }

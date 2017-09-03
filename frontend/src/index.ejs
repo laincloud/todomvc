@@ -2,29 +2,39 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title><%= htmlWebpackPlugin.options.title %></title>
-        <style> [v-cloak] { display: none; } </style>
+        <title>LAIN • TodoMVC</title>
+        <style>[v-cloak] { display: none; }</style>
     </head>
     <body>
-        <section class="todoapp" v-cloak>
+        <section class="todoapp">
             <header class="header">
                 <h1>todos</h1>
-                <input class="new-todo" autofucos autocomplete="off" placeholder="What needs to be done?" v-model="newTodo" @keyup.enter="addTodo">
+                <input class="new-todo"
+                       autofocus autocomplete="off"
+                       placeholder="What needs to be done?"
+                       v-model="newTodo"
+                       @keyup.enter="addTodo">
             </header>
-            <section class="main" v-show="todos.length">
+            <section class="main" v-show="todos.length" v-cloak>
                 <input class="toggle-all" type="checkbox" v-model="allDone">
                 <ul class="todo-list">
-                    <li class="todo" v-for="todo in filteredTodos" :class="{completed: todo.completed, editing: todo == editedTodo}">
+                    <li class="todo" v-for="todo in filteredTodos"
+                        :class="{completed: todo.completed, editing: todo == editedTodo}">
                         <div class="view">
                             <input class="toggle" type="checkbox" v-model="todo.completed">
                             <label @dblclick="editTodo(todo)">{{todo.title}}</label>
                             <button class="destroy" @click="removeTodo(todo)"></button>
                         </div>
-                        <input class="edit" type="text" v-model="todo.title" v-todo-focus="todo == editedTodo" @blur="doneEdit(todo)" @keyup.enter="doneEdit(todo)" @keyup.esc="cancelEdit(todo)">
+                        <input class="edit" type="text"
+                               v-model="todo.title"
+                               v-todo-focus="todo == editedTodo"
+                               @blur="doneEdit(todo)"
+                               @keyup.enter="doneEdit(todo)"
+                               @keyup.esc="cancelEdit(todo)">
                     </li>
                 </ul>
             </section>
-            <footerc class="footer" v-show="todos.length">
+            <footer class="footer" v-show="todos.length" v-cloak>
                 <span class="todo-count">
                     <strong v-text="remaining"></strong> {{pluralize('item', remaining)}} left
                 </span>
@@ -36,7 +46,7 @@
                 <button class="clear-completed" @click="removeCompleted" v-show="todos.length > remaining">
                     Clear completed
                 </button>
-            </footerc>
+            </footer>
         </section>
         <footer class="info">
             <p>Double-click to edit a todo</p>

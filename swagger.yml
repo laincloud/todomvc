@@ -135,6 +135,28 @@ paths:
           description: "Error"
           schema:
             $ref: "#/definitions/error"
+  /:
+    get:
+      operationId: indexHTML
+      description: "Home page"
+      tags:
+        - static
+      produces:
+        - text/html
+      responses:
+        "200":
+          description: "Home page"
+  /bundle.js:
+    get:
+      operationId: bundleJs
+      description: "Bundle JS"
+      tags:
+        - static
+      produces:
+        - text/javascript
+      responses:
+        "200":
+          description: "Bundle JS"
 
 definitions:
   error:
