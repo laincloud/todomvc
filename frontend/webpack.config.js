@@ -1,5 +1,4 @@
 const path = require('path');
-const HTMLWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = {
@@ -20,14 +19,20 @@ module.exports = {
                 test: /\.js$/,
                 exclude: /node_modules/,
                 loader: 'eslint-loader'
+            },
+            {
+                test: /\.(html|ico)$/,
+                use: [{
+                    loader: 'file-loader',
+                    options: {
+                        name: '[name].[ext]'
+                    }
+                }]
             }
         ]
     },
     plugins: [
         new CleanWebpackPlugin(['dist']),
-        new HTMLWebpackPlugin({
-            template: './src/index.ejs'
-        })
     ],
     resolve: {
         alias: {

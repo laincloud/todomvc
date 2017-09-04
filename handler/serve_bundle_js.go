@@ -13,8 +13,8 @@ import (
 	"go.uber.org/zap"
 )
 
-// BundleJs 返回 bundle.js
-func BundleJs(_ static.BundleJsParams, db *xorm.Engine, logger *zap.Logger) middleware.Responder {
+// ServeBundleJs 返回 bundle.js
+func ServeBundleJs(_ static.ServeBundleJsParams, _ *xorm.Engine, logger *zap.Logger) middleware.Responder {
 	return middleware.ResponderFunc(func(w http.ResponseWriter, _ runtime.Producer) {
 		util.ServeFile(w, fmt.Sprintf("%s/bundle.js", config.StaticFileDirectory), logger)
 	})

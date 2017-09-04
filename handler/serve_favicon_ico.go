@@ -13,9 +13,9 @@ import (
 	"go.uber.org/zap"
 )
 
-// IndexHTML 返回主页
-func IndexHTML(_ static.IndexHTMLParams, db *xorm.Engine, logger *zap.Logger) middleware.Responder {
+// ServeFaviconIco 返回网站图标
+func ServeFaviconIco(_ static.ServeFaviconIcoParams, _ *xorm.Engine, logger *zap.Logger) middleware.Responder {
 	return middleware.ResponderFunc(func(w http.ResponseWriter, _ runtime.Producer) {
-		util.ServeFile(w, fmt.Sprintf("%s/index.html", config.StaticFileDirectory), logger)
+		util.ServeFile(w, fmt.Sprintf("%s/favicon.ico", config.StaticFileDirectory), logger)
 	})
 }

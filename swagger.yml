@@ -137,7 +137,7 @@ paths:
             $ref: "#/definitions/error"
   /:
     get:
-      operationId: indexHTML
+      operationId: serveIndexHTML
       description: "Home page"
       tags:
         - static
@@ -146,9 +146,9 @@ paths:
       responses:
         "200":
           description: "Home page"
-  /bundle.js:
+  /dist/bundle.js:
     get:
-      operationId: bundleJs
+      operationId: serveBundleJs
       description: "Bundle JS"
       tags:
         - static
@@ -157,6 +157,16 @@ paths:
       responses:
         "200":
           description: "Bundle JS"
+  /favicon.ico:
+    get:
+      operationId: serveFavicon.ico
+      tags:
+        - static
+      produces:
+        - application/octet-stream
+      responses:
+        "200":
+          description: "favicon.ico"
 
 definitions:
   error:

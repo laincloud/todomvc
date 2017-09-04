@@ -2,7 +2,8 @@
     "extends": "standard",
     "rules": {
         "semi": [2, "always"],
-        "indent": [2, 4]
+        "indent": [2, 4],
+        "space-before-function-paren": ["error", "never"]
     },
     "env": {
         "browser": true

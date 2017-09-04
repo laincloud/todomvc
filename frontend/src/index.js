@@ -1,166 +1,106 @@
+import axios from 'axios';
 import 'todomvc-app-css/index.css';
-import 'todomvc-common/base.css';
-import 'todomvc-common/base.js';
 import Vue from 'vue';
-import VueResource from 'vue-resource';
 
-Vue.use(VueResource);
+import TodoStorage from './store.js';
+import './favicon.ico';
+import './index.html';
+
+axios.defaults.headers.common['Content-Type'] = 'application/vnd.laincloud.todomvc.v1+json';
 
 var filters = {
-    all: function (todos) {
+    all: function(todos) {
         return todos;
     },
-    active: function (todos) {
-        return todos.filter(function (todo) {
+    active: function(todos) {
+        return todos.filter(function(todo) {
             return !todo.completed;
         });
     },
-    completed: function (todos) {
-        return todos.filter(function (todo) {
+    completed: function(todos) {
+        return todos.filter(function(todo) {
             return todo.completed;
         });
     }
 };
 
-var app = new Vue({
-    data: {
-        todos: [],
-        newTodo: '',
-        editedTodo: null,
-        visibility: 'all'
+Vue.component('todo-component', {
+    props: [
+        'id',
+        'initialTitle',
+        'initialCompleted'
+    ],
+    template: `
+<li class="todo" :class="{completed: completed, editing: editing}">
+    <div class="view">
+        <input class="toggle" type="checkbox" v-model="completed">
+        <label @dblclick="editTodo">{{title}}</label>
+        <button class="destroy" @click="removeTodo"></button>
+    </div>
+    <input class="edit" type="text"
+            v-model="title"
+            v-todo-focus="editing"
+            @blur="doneEdit"
+            @keyup.enter="doneEdit"
+            @keyup.esc="cancelEdit">
+</li>
+`,
+    data: function() {
+        return {
+            title: this.initialTitle,
+            completed: this.initialCompleted,
+            editing: false
+        };
     },
-    computed: {
-        filteredTodos: function () {
-            return filters[this.visibility](this.todos);
+    watch: {
+        initialCompleted: function(newCompleted, oldCompleted) {
+            this.completed = newCompleted;
         },
-        remaining: function () {
-            return filters.active(this.todos).length;
-        },
-        allDone: {
-            get: function () {
-                return this.remaining === 0;
-            },
-            set: function (value) {
-                this.todos.forEach(function (todo) {
-                    todo.completed = value;
+        completed: function(newCompleted, oldCompleted) {
+            if (newCompleted !== oldCompleted) {
+                TodoStorage.updateTodo({
+                    id: this.id,
+                    title: this.title,
+                    completed: newCompleted
                 });
+                this.$emit('update-todo-status', this.id, newCompleted);
             }
         }
     },
     methods: {
-        pluralize: function (word, count) {
-            return word + (count === 1 ? '' : 's');
+        editTodo: function() {
+            this.beforeEditCache = this.title;
+            this.editing = true;
         },
-        fetchTodos: function () {
-            this.$http.get('/todos', {
-                headers: {
-                    'Accept': 'application/vnd.laincloud.todomvc.v1+json'
-                }
-            }).then(response => {
-                if (response.status !== 200) {
-                    console.error('GET /todos failed, response: %o.', response);
-                    return;
-                }
+        doneEdit: function() {
+            if (!this.editing) {
+                return;
+            }
 
-                console.info('GET /todos succeed, response: %o.', response);
-                this.todos = JSON.parse(response.body);
-                console.info('this.todos: %o', this.todos);
-            }, response => {
-                console.error('GET /todos failed, error: %o.', response);
-            });
-        },
-        addTodo: function () {
-            var title = this.newTodo && this.newTodo.trim();
+            this.editing = false;
+            var title = this.title.trim();
             if (!title) {
+                this.removeTodo();
                 return;
             }
 
-            var todo = {
+            TodoStorage.updateTodo({
+                id: this.id,
                 title: title,
-                completed: false
-            };
-            this.$http.post('/todos', JSON.stringify(todo), {
-                headers: {
-                    'Accept': 'application/vnd.laincloud.todomvc.v1+json',
-                    'Content-Type': 'application/vnd.laincloud.todomvc.v1+json'
-                }
-            }).then(response => {
-                if (response.status !== 201) {
-                    console.error('POST /todos failed, body: %o, response: %o.', todo, response);
-                    return;
-                };
-
-                console.info('POST /todos succeed, body: %o, response: %o.', todo, response);
-                var newTodo = JSON.parse(response.body);
-                this.todos.push(newTodo);
-                this.newTodo = '';
-                console.info('this.todos: %o', this.todos);
-            }, error => {
-                console.error('POST /todos failed, body: %o, error: %o.', newTodo, error);
+                completed: this.completed
             });
         },
-        removeTodo: function (todo) {
-            var index = this.todos.indexOf(todo);
-            this.todos.splice(index, 1);
-            this.$http.delete('/todos/' + todo.id, {
-                method: 'DELETE',
-                headers: {
-                    'Accept': 'application/vnd.laincloud.todomvc.v1+json'
-                }
-            }).then(response => {
-                if (response.status !== 204) {
-                    console.error('DELETE /todos/%s failed, response: %o.', todo.id, response);
-                    return;
-                }
-
-                console.info('DELETE /todos/%s succeed.', todo.id);
-            }, error => {
-                console.error('DELETE /todos/%s failed, error: %o.', todo.id, error);
-            });
+        removeTodo: function() {
+            TodoStorage.deleteTodo(this.id);
+            this.$emit('remove-todo', this.id);
         },
-        editTodo: function (todo) {
-            this.beforeEditCache = todo.title;
-            this.editedTodo = todo;
-        },
-        doneEdit: function (todo) {
-            if (!this.editedTodo) {
-                return;
-            }
-            this.editedTodo = null;
-            todo.title = todo.title.trim();
-            if (!todo.title) {
-                this.removeTodo(todo);
-                return;
-            }
-            this.$http.put('/todos' + todo.id, JSON.stringify(todo), {
-                headers: {
-                    'Accept': 'application/vnd.laincloud.todomvc.v1+json',
-                    'Content-Type': 'application/vnd.laincloud.todomvc.v1+json'
-                }
-            }).then(response => {
-                if (response.status !== 204) {
-                    console.error('PUT /todos/%s failed, body: %o, response: %o.', todo.id, todo, response);
-                    return;
-                };
-
-                console.info('PUT /todos/%s succeed, body: %o, response: %o.', todo.id, todo, response);
-            }, error => {
-                console.error('PUT /todos/%s failed, body: %o, error: %o.', todo.id, todo, error);
-            });
-        },
-        cancelEdit: function (todo) {
-            this.editedTodo = null;
-            todo.title = this.beforeEditCache;
-        },
-        removeCompleted: function () {
-            this.todos = filters.active(this.todos);
+        cancelEdit: function() {
+            this.editing = false;
+            this.title = this.beforeEditCache;
         }
     },
-    mounted: function () {
-        this.fetchTodos();
-    },
     directives: {
-        'todo-focus': function (el, binding) {
+        'todo-focus': function(el, binding) {
             if (binding.value) {
                 el.focus();
             }
@@ -168,7 +108,80 @@ var app = new Vue({
     }
 });
 
-function onHashChange () {
+var app = new Vue({
+    data: {
+        todos: [],
+        newTodo: '',
+        editingTodoId: null,
+        visibility: 'all'
+    },
+    computed: {
+        filteredTodos: function() {
+            return filters[this.visibility](this.todos);
+        },
+        remaining: function() {
+            return filters.active(this.todos).length;
+        },
+        allDone: {
+            get: function() {
+                return this.remaining === 0;
+            },
+            set: function(value) {
+                this.todos.forEach(function(todo) {
+                    todo.completed = value;
+                });
+            }
+        }
+    },
+    methods: {
+        pluralize: function(word, count) {
+            return word + (count === 1 ? '' : 's');
+        },
+        addTodo: function() {
+            var title = this.newTodo && this.newTodo.trim();
+            if (!title) {
+                return;
+            }
+
+            TodoStorage.createTodo(this.todos, {
+                title: title,
+                completed: false
+            });
+            this.newTodo = '';
+            console.info('this.todos: %o', this.todos);
+        },
+        updateTodoStatus: function(todoID, newStatus) {
+            this.todos.forEach((item, i, todos) => {
+                if (item.id === todoID) {
+                    todos[i].completed = newStatus;
+                }
+            });
+        },
+        removeTodo: function(todoID) {
+            var index = this.todos.findIndex(item => {
+                return item.id === todoID;
+            });
+            this.todos.splice(index, 1);
+        },
+        removeCompleted: function() {
+            var toRemoveTodos = filters.completed(this.todos);
+            toRemoveTodos.forEach(todo => {
+                TodoStorage.deleteTodo(todo.id);
+            });
+            this.todos = filters.active(this.todos);
+        }
+    },
+    mounted: function() {
+        axios.get('/todos').then(response => {
+            console.info('GET /todos succeed, response: %o.', response);
+            this.todos = response.data;
+        }).catch(error => {
+            console.error('GET /todos failed, error: %o.', error);
+        });
+    }
+});
+
+function onHashChange() {
     var visibility = window.location.hash.replace(/#\/?/, '');
     if (filters[visibility]) {
         app.visibility = visibility;
