@@ -1,7 +1,3 @@
-import axios from 'axios';
-import 'todomvc-app-css/index.css';
-import Vue from 'vue';
-
 import TodoStorage from './store.js';
 import './favicon.ico';
 import './index.html';

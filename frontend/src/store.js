@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 axios.defaults.headers.common['Accept'] = 'application/vnd.laincloud.todomvc.v1+json';
 
 var TodoStorate = {
