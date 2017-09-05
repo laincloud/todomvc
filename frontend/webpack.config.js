@@ -1,5 +1,6 @@
 const path = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
     entry: ['./src/index.js'],
@@ -18,10 +19,13 @@ module.exports = {
             {
                 test: /\.js$/,
                 exclude: /node_modules/,
-                loader: 'eslint-loader'
+                loader: [
+                    'babel-loader'
+                ]
             },
             {
                 test: /\.(html|ico)$/,
+                exclude: /node_modules/,
                 use: [{
                     loader: 'file-loader',
                     options: {
@@ -33,6 +37,7 @@ module.exports = {
     },
     plugins: [
         new CleanWebpackPlugin(['dist']),
+        new UglifyJSPlugin()
     ],
     resolve: {
         alias: {
