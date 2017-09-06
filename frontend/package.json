@@ -6,12 +6,7 @@
   "repository": "https://github.com/laincloud/todomvc",
   "author": "bibaijin <bibaijin@gmail.com>",
   "license": "MIT",
-  "dependencies": {
-    "axios": "^0.16.2",
-    "director": "^1.2.8",
-    "todomvc-app-css": "2.0.6",
-    "vue": "^2.4.2"
-  },
+  "dependencies": {},
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
@@ -30,9 +25,10 @@
     "html-webpack-plugin": "^2.30.1",
     "style-loader": "^0.18.2",
     "uglifyjs-webpack-plugin": "^0.4.6",
-    "webpack": "^3.5.5"
+    "webpack": "^3.5.5",
+    "webpack-merge": "^4.1.0"
   },
   "scripts": {
-    "build": "webpack -p"
+    "build": "webpack --config webpack.prod.js"
   }
 }

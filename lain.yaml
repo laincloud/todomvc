@@ -3,7 +3,7 @@ appname: todomvc
 build:
   base: golang:1.9
   prepare:
-    version: 20170902
+    version: 20170903
     script:
       - curl -sL https://deb.nodesource.com/setup_8.x | bash -
       - apt-get install -y nodejs
@@ -18,7 +18,7 @@ build:
       - cd $GOPATH/src/github.com/laincloud/todomvc/frontend && yarn install
   script:
     - cp -rf . $GOPATH/src/github.com/laincloud/todomvc
-    - cd $GOPATH/src/github.com/laincloud/todomvc/ && dep ensure && swagger generate server -A todomvc -f ./swagger.yml -T go-swagger-gen-templates/ -t gen
+    - cd $GOPATH/src/github.com/laincloud/todomvc/ && swagger generate server -A todomvc -f ./swagger.yml -T go-swagger-gen-templates/ -t gen
     - go install github.com/laincloud/todomvc/gen/cmd/todomvc-server
     - cd $GOPATH/src/github.com/laincloud/todomvc/frontend && yarn install && yarn run build
 
