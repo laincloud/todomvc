@@ -6,9 +6,6 @@ import (
 	"os"
 )
 
-// StaticFileDirectory 表示静态文件目录
-const StaticFileDirectory = "/lain/app/dist"
-
 // Config 表示配置
 type Config struct {
 	MySQL MySQLConfig
