@@ -1,15 +1,10 @@
 appname: todomvc
 
 build:
-  base: golang:1.9
+  base: laincloud/golang-node:1.9.0-8.4.0
   prepare:
-    version: 20170903
+    version: 20170904
     script:
-      - curl -sL https://deb.nodesource.com/setup_8.x | bash -
-      - apt-get install -y nodejs
-      - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-      - echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-      - apt-get update && apt-get install -y yarn
       - go get -u github.com/golang/dep/cmd/dep
       - go get -u github.com/go-swagger/go-swagger/cmd/swagger
       - mkdir -p $GOPATH/src/github.com/laincloud/todomvc
@@ -23,20 +18,30 @@ build:
     - cd $GOPATH/src/github.com/laincloud/todomvc/frontend && yarn install && yarn run build
 
 release:
-  dest_base: laincloud/centos:7.3.1611
+  dest_base: laincloud/nginx:1.13.5
   copy:
     - src: $GOPATH/bin/todomvc-server
       dest: /lain/app/todomvc-server
+    - src: $GOPATH/src/github.com/laincloud/todomvc/nginx.conf
+      dest: /etc/nginx/nginx.conf
     - src: $GOPATH/src/github.com/laincloud/todomvc/frontend/dist
-      dest: /lain/app/dist
+      dest: /usr/share/nginx/html
 
 web:
+  cmd: nginx
+  port: 80
+  memory: 32M
+  healthcheck: "/ping"
+
+web.api:
   cmd: /lain/app/todomvc-server --host=0.0.0.0 --port=8080 --config=/lain/app/prod.json
   port: 8080
   memory: 32M
   healthcheck: "/ping"
   secret_files:
     - /lain/app/prod.json
+  mountpoint:
+    - /api
 
 use_services:
   mysql-service:

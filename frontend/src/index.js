@@ -2,6 +2,7 @@ import TodoStorage from './store.js';
 import './favicon.ico';
 import './index.html';
 
+axios.defaults.baseURL = '/api';
 axios.defaults.headers.common['Content-Type'] = 'application/vnd.laincloud.todomvc.v1+json';
 
 var filters = {
@@ -168,11 +169,11 @@ var app = new Vue({
         }
     },
     mounted: function() {
-        axios.get('/todos').then(response => {
-            console.info('GET /todos succeed, response: %o.', response);
+        axios.get('todos').then(response => {
+            console.info('GET todos succeed, response: %o.', response);
             this.todos = response.data;
         }).catch(error => {
-            console.error('GET /todos failed, error: %o.', error);
+            console.error('GET todos failed, error: %o.', error);
         });
     }
 });
