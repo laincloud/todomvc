@@ -27,11 +27,13 @@ release:
     - src: $GOPATH/src/github.com/laincloud/todomvc/frontend/dist
       dest: /usr/share/nginx/html
 
-web:
+web.web:
   cmd: nginx
   port: 80
   memory: 32M
   healthcheck: "/ping"
+  mountpoint:
+    - /
 
 web.api:
   cmd: /lain/app/todomvc-server --host=0.0.0.0 --port=8080 --config=/lain/app/prod.json

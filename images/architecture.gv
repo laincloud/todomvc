@@ -1,0 +1,14 @@
+digraph G {
+  rankdir=LR;
+  node [shape=box];
+
+  Webrouter [label="Webrouter of LAIN"];
+  FrontendMountpoint [label="http://todomvc.${LAIN-domain}/"];
+  Frontend [label="todomvc.web.web"];
+  BackendMountpoint [label="http://todomvc.${LAIN-domain}/api"];
+  Backend [label="todomvc.web.api"];
+
+  Broswer -> Webrouter;
+  Webrouter -> FrontendMountpoint -> Frontend;
+  Webrouter -> BackendMountpoint -> Backend -> MySQL;
+}
