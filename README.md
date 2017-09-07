@@ -41,7 +41,7 @@ lain.yaml 是 LAIN 应用的核心，它定义了 LAIN 应用的编译步骤和�
 
 `release.dest_base` 定义了发布镜像。之所以不使用默认的 build 镜像有 2 个原因：
 - 我们不需要在发布镜像里包含编译依赖，比如 golang 和 node 等 
-- 我们需要 nginx 作为静态文件服务器，所以使用
+- 我们需要 nginx 作为静态文件服务器
 
 `release.copy` 字段可以帮我们把编译结果 `todomvc-server` 和 `frontend/dist`
 从编译镜像复制到发布镜像。
@@ -88,7 +88,7 @@ lain.yaml 是 LAIN 应用的核心，它定义了 LAIN 应用的编译步骤和�
 
 ```
 lain reposit ${LAIN-cluster}
-lain secret add ${LAIN-cluster} api /lain/app/prod.json -f prod.json  # prod.json 是秘密文件，并没有上传到 github，请参照 local.json 的格式填写
+lain secret add ${LAIN-cluster} api /lain/app/prod.json -f prod.json  # prod.json 是秘密文件，并没有上传到 github，请参照 demo.json 的格式填写
 lain build
 lain tag ${LAIN-cluster}
 lain push ${LAIN-cluster}
